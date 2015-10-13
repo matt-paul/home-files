@@ -7,7 +7,6 @@
 # time that oh-my-zsh is loaded.
 # currently liking: 'miloshadzic', 'blinks', 'smt', 'dogenpunk'
 ZSH_THEME="af-magic"
-#ZSH_THEME="darkblood"
 
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
@@ -68,7 +67,7 @@ export ZSH=~/.oh-my-zsh
 source $ZSH/oh-my-zsh.sh
 # User configuration
 
-export PATH=$PATH:"/usr/local/bin:/usr/local/heroku/bin:/Users/roidriscoll/.rvm/gems/ruby-2.1.1/bin:/Users/roidriscoll/.rvm/gems/ruby-2.1.1@global/bin:/Users/roidriscoll/.rvm/rubies/ruby-2.1.1/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/Users/roidriscoll/.rvm/bin"
+export PATH=$PATH:"/usr/local/bin:/usr/local/bin/git:/usr/local/heroku/bin:/Users/Harry/.rvm/gems/ruby-2.1.1/bin:/Users/Harry/.rvm/gems/ruby-2.1.1@global/bin:/Users/Harry/.rvm/rubies/ruby-2.1.1/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/Users/Harry/.rvm/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 export MANPAGER="col -b | vim -c 'set ft=man ts=8 nomod nolist nonu' -c 'nnoremap i <nop>' -"
 
@@ -116,7 +115,7 @@ source /usr/local/share/zsh/site-functions
 alias s="~/chat.txt << "
 
 alias rubes="ruby -run -ehttpd . -p8000"
-alias roigrok="ngrok -subdomain=roi 8000"
+alias harrygrok="ngrok -subdomain=harry 8000"
 
 bindkey -v
 
