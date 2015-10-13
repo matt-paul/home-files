@@ -10,7 +10,7 @@ To install, first install [homesick](https://github.com/technicalpickles/homesic
 
 Next, use the homesick command to clone this repository:
 
-    homesick clone git://github.com/roidriscoll/home-files.git
+    homesick clone https://github.com/hvenables/home-files.git
 
 you can now link its contents into your home dir:
 
