@@ -1,0 +1,2 @@
+export GOOGLE_ID=485009488568-6sd4907alko1rjftrrt9fo4ha3foql6v.apps.googleusercontent.com
+export GOOGLE_PLUS_SECRET=UftB0H6tYeJ-9r_zPu-_Urmb

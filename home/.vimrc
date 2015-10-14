@@ -3,11 +3,22 @@
 set nocompatible
 
 " Change <Leader>
-let mapleader = ","
+let mapleader = "\<Space>"
 
 if filereadable(expand("~/.vimrc.bundles"))
   source ~/.vimrc.bundles
 endif
+
+Bundle 'gmarik/vundle'  
+
+Bundle 'altercation/vim-colors-solarized'  
+
+" Some settings to enable the theme:
+set number        " Show line numbers
+syntax enable     " Use syntax highlighting
+set background=dark
+colorscheme solarized
+
 
 "colorscheme jellybeans
 
@@ -317,7 +328,7 @@ nnoremap j gj
 nnoremap k gk
 
 " New Theme <3
-colorscheme gruvbox
+colorscheme solarized
 
 " Setting dark mode
 set background=dark
@@ -343,4 +354,6 @@ let g:hardtime_default_on = 1
 let g:hardtime_timeout = 900
 let g:hardtime_showmsg = 1
 let g:hardtime_maxcount = 2
+
+execute pathogen#infect()
 
