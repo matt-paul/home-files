@@ -1,6 +1,7 @@
 [user]
     name = Matt Paul
-    email = mattpaul001@gmail.com
+	email = mattpaul001@icloud.com
+	name = Matt Paul
 [push]
     default = simple
 [core]
@@ -95,3 +96,7 @@
   prune = true
 [credential]
 	helper = osxkeychain
+[filter "lfs"]
+	clean = git lfs clean %f
+	smudge = git lfs smudge %f
+	required = true

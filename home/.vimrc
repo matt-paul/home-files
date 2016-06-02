@@ -9,18 +9,56 @@ if filereadable(expand("~/.vimrc.bundles"))
   source ~/.vimrc.bundles
 endif
 
-Bundle 'gmarik/vundle'  
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 
-Bundle 'altercation/vim-colors-solarized'  
+"This is aiming to make escape / jj more instantaneous
+set timeoutlen=1000 ttimeoutlen=0
 
 " Some settings to enable the theme:
+set relativenumber
 set number        " Show line numbers
 syntax enable     " Use syntax highlighting
 set background=dark
-colorscheme solarized
+colorscheme  gruvbox
 
+set term=screen-256color
 
-"colorscheme jellybeans
+" PlugInstall manager
+call plug#begin('~/.vim/plugged')
+Plug 'vim-scripts/vim-auto-save'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'mattn/emmet-vim'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'rking/ag.vim'
+Plug 'Yggdroot/indentLine'
+Plug 'hail2u/vim-css3-syntax'
+Plug 'jiangmiao/auto-pairs'
+Plug 'suan/vim-instant-markdown'
+Plug 'pangloss/vim-javascript'
+Plug 'justinj/vim-react-snippets' "vim-react-snippets:
+Plug 'SirVer/ultisnips' " ultisnips
+Plug 'honza/vim-snippets' " Other sets of snippets (optional)
+Plug 'mxw/vim-jsx' "Jsx highlighting
+" Addlugins to &runtimepath
+Plug 'mitsuhiko/vim-jinja' "Jinja support
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'scrooloose/syntastic'
+Plug 'takac/vim-hardtime'
+Plug 'ntpeters/vim-better-whitespace'
+Plug 'easymotion/vim-easymotion'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'tmhedberg/matchit'
+Plug 'tpope/vim-sensible'
+Plug 'morhetz/gruvbox'
+Plug 'sjl/vitality.vim'
+Plug 'ervandew/supertab'
+Plug 'othree/html5.vim'
+Plug 'tpope/vim-obsession'
+Plug 'tpope/vim-vinegar'
+call plug#end()
+
 
 set backspace=2   " Backspace deletes like most programs in insert mode
 set nobackup
@@ -29,20 +67,29 @@ set noswapfile    " http://robots.thoughtbot.com/post/18739402579/global-gitigno
 set history=50
 set ruler         " show the cursor position all the time
 set showcmd       " display incomplete commands
+
 set incsearch     " do incremental searching
+set hlsearch      " press :noh to clear, might make it leader + h"
+set ignorecase
+set smartcase
+
+
 set laststatus=2  " Always display the status line
 set autowrite     " Automatically :write before running commands
 set cursorline    " highlight the current line the cursor is on
 set complete=.,w,b,u,t,i
-
-" Make it obvious where 80 characters is
-set textwidth=80
+set wildmenu
+set textwidth=80 " Make it obvious where 80 characters is
 set colorcolumn=+1
+set clipboard=unnamed
 
-" Numbers
+let g:hardtime_default_on = 0
+
+" Numbhers
 set number
 set numberwidth=5
 
+imap <Tab> <C-P>
 "sm:    flashes matching brackets or parentheses
 set showmatch
 
@@ -73,12 +120,12 @@ set spelllang=en_gb
 " will use completion if not at beginning
 set wildmode=list:longest,list:full
 function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-p>"
-    endif
+  let col = col('.') - 1
+  if !col || getline('.')[col - 1] !~ '\k'
+    return "\<tab>"
+  else
+    return "\<c-p>"
+  endif
 endfunction
 inoremap <Tab> <c-r>=InsertTabWrapper()<cr>
 inoremap <S-Tab> <c-n>
@@ -99,13 +146,10 @@ augroup vimrcEx
   " Don't do it for commit messages, when the position is invalid, or when
   " inside an event handler (happens when dropping a file on gvim).
   autocmd BufReadPost *
-    \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
-    \   exe "normal g`\"" |
-    \ endif
+        \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
+        \   exe "normal g`\"" |
+        \ endif
 
-  " Cucumber navigation commands
-  autocmd User Rails Rnavcommand step features/step_definitions -glob=**/* -suffix=_steps.rb
-  autocmd User Rails Rnavcommand config config -glob=**/* -suffix=.rb -default=routes
 
   " Set syntax highlighting for specific file types
   autocmd BufRead,BufNewFile Appraisals set filetype=ruby
@@ -114,16 +158,12 @@ augroup vimrcEx
   " Enable spellchecking for Markdown
   autocmd FileType markdown setlocal spell
 
-  " Automatically wrap at 80 characters for Markdown
-  "autocmd BufRead,BufNewFile *.md setlocal textwidth=80
-
-  " Automatically wrap at 72 characters and spell check git commit messages
-  autocmd FileType gitcommit setlocal textwidth=72
-  autocmd FileType gitcommit setlocal spell
 
   " Allow stylesheets to autocomplete hyphenated words
   autocmd FileType css,scss,sass setlocal iskeyword+=-
 augroup END
+
+
 
 " Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
 if executable('ag')
@@ -137,12 +177,25 @@ if executable('ag')
   let g:ctrlp_use_caching = 0
 endif
 
-" Exclude Javascript files in :Rtags via rails.vim due to warnings when parsing
-let g:Tlist_Ctags_Cmd="ctags --exclude='*.js'"
+" bind K to grep word under cursor
+" bind \ (backward slash) to grep shortcut
+command! -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+nnoremap \ :Ag<SPACE>
+
+
 
 " configure syntastic syntax checking to check on open as well as save
-let g:syntastic_check_on_open=1
-let g:syntastic_html_tidy_ignore_errors=[" proprietary attribute \"ng-"]
+" let g:syntastic_html_tidy_ignore_errors=[" proprietary attribute \"ng-"]
+" let g:syntastic_javascript_checkers = ['eslint']
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
 
 let g:ctrlp_extensions = ['tag']
 let g:ctrlp_show_hidden = 1
@@ -151,21 +204,6 @@ let g:ctrlp_show_hidden = 1
 set splitbelow
 set splitright
 
-" Open the Rails ApiDock page for the word under cursor, using the 'open'
-  " command
-let g:browser = 'open '
-
-function! OpenRailsDoc(keyword)
-let url = 'http://apidock.com/rails/'.a:keyword
-exec '!'.g:browser.' '.url
-endfunction
-
-" Open the Ruby ApiDock page for the word under cursor, using the 'open'
-" command
-function! OpenRubyDoc(keyword)
-let url = 'http://apidock.com/ruby/'.a:keyword
-exec '!'.g:browser.' '.url
-endfunction
 
 " NERDTree
 let NERDTreeQuitOnOpen=1
@@ -175,15 +213,12 @@ let NERDTreeHighlightCursorline = 1
 let NERDTreeShowHidden = 1
 " map enter to activating a node
 let NERDTreeMapActivateNode='<CR>'
-let NERDTreeIgnore=['\.git','\.DS_Store','\.pdf', '.beam']
+let NERDTreeIgnore=['\.DS_Store','\.pdf', '.beam']
 
 "" Shortcuts!!
 
-" Index ctags from any project, including those outside Rails
-map <Leader>ct :!ctags -r .<CR>
-
 " Run commands that require an interactive shell
-nnoremap <Leader>r :RunInInteractiveShell<space>
+" nnoremap <Leader>r :RunInInteractiveShell<space>
 
 " Quicker window movement
 nnoremap <C-j> <C-w>j
@@ -191,10 +226,6 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
 
-" Tab navigation
-nmap <leader>tn :tabnext<CR>
-nmap <leader>tp :tabprevious<CR>
-nmap <leader>te :tabedit
 
 " Remap F1 from Help to ESC.  No more accidents.
 nmap <F1> <Esc>
@@ -209,44 +240,53 @@ nmap N Nzz
 nmap * *Nzz
 nmap # #nzz
 
+nnoremap <leader>1 :ls<CR>:b<space>
+
 " Yank from the cursor to the end of the line, to be consistent with C and D.
 nnoremap Y y$
 
-" Easily lookup documentation on apidock
-noremap <leader>rb :call OpenRubyDoc(expand('<cword>'))<CR>
-noremap <leader>rr :call OpenRailsDoc(expand('<cword>'))<CR>
+" automatically rebalance windows on vim resize
+autocmd VimResized * :wincmd =
 
-" Easily spell check
-" http://vimcasts.org/episodes/spell-checking/
-nmap <silent> <leader>s :set spell!<CR>
+let g:tmux_navigator_save_on_switch = 1
+autocmd InsertLeave * write
 
+let g:auto_save = 1
+let g:auto_save_in_insert_mode = 0
+
+"show all open buffers with F5
+:nnoremap <F5> :buffers<CR>:buffer<Space>
 
 map <C-c>n :cnext<CR>
 map <C-c>p :cprevious<CR>
 
-" Added by Leo
-
+" airline
+let g:airline#extensions#tabline#enabled = 1
+set laststatus=2
+let g:airline#extensions#tabline#show_tab_nr = 1
 " Switch into background mode
-nnoremap <leader>. <C-z>
-
+" nnoremap <leader>. <C-z>
+" move among buffers with CTRL
 " inoremap <C-o> my<Esc>o<Esc>`yi
-" Git shortcut
-map <leader>g :Git<space>
+"configure whether buffer numbers should be shown. >
+let g:airline#extensions#tabline#buffer_nr_show = 1
 
 " Move between splits
 nnoremap <S-Tab> <C-W>W
 nnoremap <Tab> <C-W><C-W>
 
+" nnoremap <C-J> <C-W><C-J>
+" nnoremap <C-K> <C-W><C-K>
+" nnoremap <C-L> <C-W><C-L>
+" nnoremap <C-H> <C-W><C-H>
+
 " Cycle forward and backward through open buffers
 nnoremap <leader>h :bprevious<CR>
 nnoremap <leader>l :bnext<CR>
 
-" No highlight after a search
-nnoremap <leader><space> :noh<cr>
-
 " Paste mode in and out
-"nnoremap <leader>p :set paste<CR>
-"nnoremap <leader>np :set nopaste<CR>
+nnoremap <leader>p :set paste<CR>
+nnoremap <leader>np :set nopaste<CR>
 
 " Create split, close split
 nnoremap <leader>w <C-w>v<C-w>1
@@ -255,11 +295,10 @@ nnoremap <leader>q <C-w>q
 " Nerdtree
 map <C-n> :NERDTreeToggle<CR>
 
-" JJ escape
-inoremap jj <ESC>:wa<CR>
-
-au FocusLost * :wa
-
+"Autosave when focusing away from Vim
+" au FocusLost * :wa
+"
+autocmd BufLeave,FocusLost,VimResized * silent! wall
 "save and run last command
 nnoremap <CR> :wa<CR>:!!<CR>
 noremap <C-j> <ESC>:wa<CR>:!!<CR>
@@ -280,26 +319,19 @@ set autowrite
 " Maybe use tslime
 set shell=/bin/sh
 
-" RSpec.vim mappings
-map <Leader>t :call RunCurrentSpecFile()<CR>
-map <Leader>s :call RunNearestSpec()<CR>
-"map <Leader>l :call RunLastSpec()<CR>
-map <Leader>a :call RunAllSpecs()<CR>
 
-" Cucumber mapping
-map <Leader>c :w<cr>:!cucumber<cr>
 
-" Easymotion
-map <Leader>l <Plug>(easymotion-lineforward)
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
-map <Leader>h <Plug>(easymotion-linebackward)
+" " Easymotion
+" map <Leader>l <Plug>(easymotion-lineforward)
+" map <Leader>j <Plug>(easymotion-j)
+" map <Leader>k <Plug>(easymotion-k)
+" map <Leader>h <Plug>(easymotion-linebackward)
 
 " keep cursor column when JK motion
 let g:EasyMotion_startofline = 0
 let g:EasyMotion_smartcase = 1
 
-" Two keyword search
+" Two keyletter search
 nmap s <Plug>(easymotion-s2)
 
 " such very magic
@@ -308,6 +340,29 @@ nmap s <Plug>(easymotion-s2)
 
 " Indentation
 nnoremap <Leader>i m^gg=G`^
+" =========================================
+" Added by Matt
+" =========================================
+let g:user_emmet_leader_key=','
+
+filetype plugin on
+
+" Vim
+let g:indentLine_color_term = 239
+"
+" "GVim
+let g:indentLine_color_gui = '#A4E57E'
+"
+"" none X terminal
+let g:indentLine_color_tty_light = 7 " (default: 4)
+let g:indentLine_color_dark = 1 " (default: 2)"
+" "
+let g:indentLine_enabled = 1
+let g:indentLine_noConcealCursor=""
+
+"Jsx highlighting with .js files
+let g:jsx_ext_required = 0
+
 
 " =========================================
 " Added by Roi
@@ -316,44 +371,71 @@ nnoremap <Leader>i m^gg=G`^
 " Strip Whitespace
 nnoremap <leader>ws :StripWhitespace<CR>
 
-" Autoformat
-map <Leader>f :Autoformat<CR>
-
 " Indentation
 nnoremap <Leader>i gg=G``
 nnoremap == gg=G``
 
-" Move up and down by visual line (as opposed to line break only)
-nnoremap j gj
-nnoremap k gk
-
-" New Theme <3
-colorscheme solarized
-
-" Setting dark mode
-set background=dark
-
 " Supercharges '%' to work on do-end, def-end, class-end, module-end etc.
 runtime macros/matchit.vim
 
-" Toggle Paste
-nnoremap <leader>p :set invpaste paste?<CR>
-imap <leader>p <C-O>:set invpaste paste?<CR>
-set pastetoggle=<leader>p
-
 nnoremap <Leader>H :%s/:\([^ ]*\)\(\s*\)=>/\1:/g<CR>
-
-" Pomodoro Thyme
-nmap <leader>T :!thyme -d<cr><cr>
 
 " Toggle relative line numbers
 let g:NumberToggleTrigger="<leader>r"
 
-" HardTime
-let g:hardtime_default_on = 1
-let g:hardtime_timeout = 900
-let g:hardtime_showmsg = 1
-let g:hardtime_maxcount = 2
+set runtimepath^=~/.vim/bundle/ag
 
-execute pathogen#infect()
+"Enable mouse
+set mouse=a
+"set to name of terminal
+set ttymouse=xterm2
 
+
+map <D-S-]> gt
+map <D-S-[> gT
+map <D-1> 1gt
+map <D-2> 2gt
+map <D-3> 3gt
+map <D-4> 4gt
+map <D-5> 5gt
+map <D-6> 6gt
+map <D-7> 7gt
+map <D-8> 8gt
+map <D-9> 9gt
+map <D-0> :tablast<CR>
+
+"================================================
+" Extra matchit for Jinja, copied from satiani/init
+" ===============================================
+setlocal ts=2
+setlocal sw=2
+setlocal sts=2
+
+" Copied from https://github.com/marionline/dotvim/blob/master/eclim/ftplugin/htmljinja.vim
+let g:HtmlJinjaBodyElements = [
+      \ ['block', 'endblock'],
+      \ ['call', 'endcall'],
+      \ ['filter', 'endfilter'],
+      \ ['for', 'endfor'],
+      \ ['if', 'elif', 'else', 'endif'],
+      \ ['macro', 'endmacro'],
+      \ ]
+" excluding 'else' on for until matchit.vim can support a duplicate word
+" (doesn't break the matching of 'else' for 'if' statements.
+"    \ ['for', 'else', 'endfor'],
+
+" add matchit.vim support for jinja tags
+if !exists('b:match_words')
+  let b:match_words = '<:>,<\@<=[ou]l\>[^>]*\%(>\|$\):<\@<=li\>:<\@<=/[ou]l>,<\@<=dl\>[^>]*\%(>\|$\):<\@<=d[td]\>:<\@<=/dl>,<\@<=\([^/][^ \t>]*\)[^>]*\%(>\|$\):<\@<=/\1>'
+endif
+for element in g:HtmlJinjaBodyElements
+  let pattern = ''
+  for tag in element[:-2]
+    if pattern != ''
+      let pattern .= ':'
+    endif
+    let pattern .= '{%-\?\s*\<' . tag . '\>' "\_.\{-}-\?%}'
+  endfor
+  let pattern .= ':{%-\?\s*\<' . element[-1:][0] . '\>\s*-\?%}'
+  let b:match_words .= ',' . pattern
+endfor
