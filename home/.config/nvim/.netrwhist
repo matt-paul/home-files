@@ -1,0 +1,9 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =7
+let g:netrw_dirhist_1='/Users/matt/Projects/seenit/zeus/frontend'
+let g:netrw_dirhist_2='/Users/matt/Projects/seenit/zeus/frontend/components'
+let g:netrw_dirhist_3='/Users/matt/Projects/seenit/zeus/frontend'
+let g:netrw_dirhist_4='/Users/matt/Projects/seenit/zeus/frontend/components'
+let g:netrw_dirhist_5='/Users/matt/Projects/seenit/zeus'
+let g:netrw_dirhist_6='/Users/matt/Projects/play_projects/nodeSchool'
+let g:netrw_dirhist_7='/Users/matt/Projects/seenit/zeus'
